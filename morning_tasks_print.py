@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""morning_tasks_print.py — print today's Notion task checklist to your printer."""
+"""morning_tasks_print.py - print today's Notion task checklist to your printer."""
 import os, sys, time, argparse, threading, itertools, subprocess, tempfile
 from contextlib import contextmanager
 from datetime import date, timedelta
@@ -144,13 +144,19 @@ def render(chosen):
         if par: s += f"\n        parent: {par}"
         if due(p): s += f"\n        due {due(p)}"
         return s
-    out = [f"{LIST_TITLE} — {date.today():%a %b %d, %Y}", "=" * 42, ""]
+    out = [f"{LIST_TITLE} - {date.today():%a %b %d, %Y}", "=" * 42, ""]
+    has_tasks = False
     for hdr, group in grouped(chosen):
         if not group: continue
+        has_tasks = True
         out.append(hdr); out.append("-" * len(hdr))
         out += [line(p) for p in group]
         out.append("")
-    if len(out) <= 3: out.append("Nothing pressing. Go find something to fix.")
+    if not has_tasks:
+        out.append("Nothing pressing. Go find something to fix.")
+        out.append("")
+    out.append("-" * 42)
+    out.append("[ ] End of day: mark completed tasks done in Notion")
     return "\n".join(out)
 
 def show_chosen(chosen):
@@ -170,7 +176,7 @@ def send(text):
     with open(path, "w", encoding="utf-8") as f:
         f.write(text)
     target = f'-Name "{PRINTER_NAME}"' if PRINTER_NAME else ""
-    ps = f'Get-Content -Raw "{path}" | Out-Printer {target}'
+    ps = f'Get-Content -Raw -Encoding UTF8 "{path}" | Out-Printer {target}'
     subprocess.run(["powershell", "-NoProfile", "-Command", ps], check=True)
 
 # ---------- main ----------
@@ -182,7 +188,7 @@ def main():
     args = ap.parse_args()
     VERBOSE = not args.quiet
 
-    say(f"\n  {LIST_TITLE} — {date.today():%a %b %d, %Y}\n")
+    say(f"\n  {LIST_TITLE} - {date.today():%a %b %d, %Y}\n")
 
     with step("Fetching tasks from Notion"):
         pages = gather()
