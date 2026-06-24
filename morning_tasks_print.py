@@ -18,7 +18,7 @@ DATABASE_ID  = os.environ["NOTION_DATABASE_ID"]
 PRINTER_NAME = os.environ.get("PRINTER_NAME")
 LIST_TITLE   = os.environ.get("LIST_TITLE", "TODAY'S TASKS")
 
-# ---------- adapt to your database's schema via .env (defaults shown) ----------
+# ---------- adapt to your database's schema via .env ----------
 PROP_TITLE    = os.environ.get("PROP_TITLE", "Task name")
 PROP_DATE     = os.environ.get("PROP_DATE", "Schedule")
 PROP_STATUS   = os.environ.get("PROP_STATUS", "Status")
@@ -65,7 +65,7 @@ def step(label):
 def say(msg=""):
     if VERBOSE: print(msg)
 
-# ---------- property helpers (defensive so others' schemas don't crash it) ----------
+# ---------- defensive property helpers ----------
 def title(p, name=None):
     pr = p["properties"].get(name or PROP_TITLE, {})
     return "".join(t["plain_text"] for t in pr.get("title", [])).strip()
@@ -76,8 +76,10 @@ def status(p):
     pr = p["properties"].get(PROP_STATUS) or {}
     v = pr.get("status");  return v["name"] if v else None
 def due(p):
-    pr = p["properties"].get(PROP_DATE) or {}
-    v = pr.get("date");  return (v["start"][:10] if v else None)
+    v = p["properties"]["Schedule"].get("date")
+    if not v:
+        return None
+    return (v.get("end") or v["start"])[:10]
 def parent_title(p):
     pr = p["properties"].get(PROP_PARENT) or {}
     rel = pr.get("relation") or []
