@@ -16,7 +16,7 @@ priority property. Map your column and option names in `.env`. This also allows 
 
 ## Setup
 
-1. git clone <repo> C:\Scripts\notion-morning-print
+1. git clone <bhanke-lab/notion-morning-print> C:\Scripts\notion-morning-print
 2. python -m venv .venv && .\.venv\Scripts\Activate.ps1
 3. pip install -r requirements.txt
 4. cp .env.example .env  and fill it in:
