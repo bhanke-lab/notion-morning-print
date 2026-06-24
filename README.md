@@ -6,7 +6,7 @@ today + urgent + in-progress, then fills to a full day), groups by Overdue /
 Today / Picked Ahead, and prints via PowerShell Out-Printer on Windows.
 
 Works with any Notion database that has a date, status, and (optional)
-priority property. Map your column and option names in `.env`.
+priority property. Map your column and option names in `.env`. This also allows for further customization of your database as needed, do whatcha want.
 
 ## Requirements
 
@@ -34,6 +34,8 @@ priority property. Map your column and option names in `.env`.
 - python morning_tasks_print.py --quiet    # silent, for Task Scheduler
 
 ## Scheduling (Windows)
+
+Can use Task Scheduler, or use the below built in pwsh script to make it easier. This prevents pw protection issues.
 
 From the repo folder, with the venv created:
 
@@ -70,4 +72,4 @@ Triggers tab > Edit > set the new time > OK.
 ## Notes
 
 - Designed for Notion API version 2022-06-28 (notion-client 2.2.1, pinned)
-- Linux/Mac: replace the `send()` PowerShell call with `lp`
+- Linux/Mac: replace the `send()` PowerShell call with `lp`, adjust the scheduling workflow per Linux/Mac documentation, or reach out and i'll probably just build it.
