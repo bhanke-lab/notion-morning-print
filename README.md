@@ -33,13 +33,35 @@ priority property. Map your column and option names in `.env`.
 - python morning_tasks_print.py --dry-run  # live view, no paper
 - python morning_tasks_print.py --quiet    # silent, for Task Scheduler
 
-## Scheduling (Task Scheduler)
+## Scheduling (Windows)
 
-- Trigger: Daily, weekdays, 5:15 AM
-- Action: <repo>\.venv\Scripts\pythonw.exe  with argument  morning_tasks_print.py --quiet
-- Start in: the repo folder (so it finds .env)
-- Check "Run whether user is logged on or not" and
-  "Run task as soon as possible after a missed start"
+From the repo folder, with the venv created:
+
+    .\setup_schedule.ps1
+
+This registers a Task Scheduler job using an Interactive logon type, so it
+needs no stored password and runs while you are logged on (a locked screen
+counts). If PowerShell blocks the script, allow it for your user once:
+
+    Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+
+### Adjusting the time or days
+
+Re-run the script with new values. The -Force flag updates the existing task:
+
+    .\setup_schedule.ps1 -Time "6:30AM"
+    .\setup_schedule.ps1 -Days Monday,Wednesday,Friday -Time "5:00AM"
+    .\setup_schedule.ps1 -Days Saturday,Sunday -Time "7:00AM"
+
+Time accepts formats like "5:15AM", "06:30", "17:00". Days are full English
+weekday names, comma-separated.
+
+Or change it in the GUI: Task Scheduler > Notion Morning Print >
+Triggers tab > Edit > set the new time > OK.
+
+### Removing it
+
+    Unregister-ScheduledTask -TaskName "Notion Morning Print" -Confirm:$false
 
 ## Tuning
 
